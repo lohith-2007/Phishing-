@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Awareness & Detector</title>
+    <!-- Importing Chart.js for the graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* CSS STYLES */
+        :root {
+            --primary: #2c3e50;
+            --accent: #e74c3c;
+            --secondary: #3498db;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        header p {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* Sections */
+        section {
+            background: white;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        /* Types Grid */
+        .types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #f9f9f9;
+            padding: 15px;
+            border-left: 5px solid var(--secondary);
+            border-radius: 5px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--dark);
+        }
+
+        /* Tips List */
+        ul.tips {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul.tips li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        ul.tips li:before {
+            content: "🛡️";
+            margin-right: 10px;
+        }
+
+        /* URL Checker Area */
+        .checker-box {
+            text-align: center;
+            padding: 20px;
+        }
+
+        input[type="text"] {
+            width: 70%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--secondary);
+        }
+
+        button {
+            padding: 15px 30px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-left: 10px;
+        }
+
+        button:hover {
+            background-color: #c0392b;
+        }
+
+        /* Results Area */
+        #resultArea {
+            display: none;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .chart-container {
+            width: 300px;
+            height: 300px;
+            margin: auto;
+        }
+
+        .risk-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .safe { color: #27ae60; }
+        .moderate { color: #f39c12; }
+        .danger { color: #c0392b; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--primary);
+            color: white;
+            margin-top: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            input[type="text"] {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            button {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>Phishing Awareness Portal</h1>
+            <p>Protect yourself from cyber threats</p>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Section 1: What is Phishing -->
+        <section id="info">
+            <h2>What is Phishing?</h2>
+            <p>Phishing is a type of social engineering attack often used to steal user data, including login credentials and credit card numbers. It occurs when an attacker, masquerading as a trusted entity, dupes a victim into opening an email, instant message, or text message.</p>
+            <p>The recipient is then tricked into clicking a malicious link, which can lead to the installation of malware, the freezing of the system as part of a ransomware attack, or the revealing of sensitive information.</p>
+        </section>
+
+        <!-- Section 2: Types of Phishing -->
+        <section id="types">
+            <h2>Types of Phishing</h2>
+            <div class="types-grid">
+                <div class="card">
+                    <h3>✉️ Email Phishing</h3>
+                    <p>The most common form. Attackers send emails impersonating legitimate companies to trick you into clicking links.</p>
+                </div>
+                <div class="card">
+                    <h3>🎯 Spear Phishing</h3>
+                    <p>Targeted attacks directed at specific individuals or companies, often using gathered personal details to seem real.</p>
+                </div>
+                <div class="card">
+                    <h3>🐳 Whaling</h3>
+                    <p>A specific type of spear phishing that targets high-profile employees, such as the CEO or CFO, to steal sensitive data.</p>
+                </div>
+                <div class="card">
+                    <h3>📱 Smishing & Vishing</h3>
+                    <p>Phishing conducted via SMS (Smishing) or Voice calls (Vishing) rather than email.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Awareness -->
+        <section id="awareness">
+            <h2>Awareness & Prevention</h2>
+            <ul class="tips">
+                <li><strong>Check the URL:</strong> Look for misspellings (e.g., amaz0n.com instead of amazon.com).</li>
+                <li><strong>Don't click suspicious attachments:</strong> Only open files from trusted sources.</li>
+                <li><strong>Verify the Sender:</strong> Check the actual email address, not just the display name.</li>
+                <li><strong>Use 2FA:</strong> Enable Two-Factor Authentication on all your accounts.</li>
+                <li><strong>HTTPS is not enough:</strong> Even phishing sites can use HTTPS (Green lock), so remain vigilant.</li>
+            </ul>
+        </section>
+
+        <!-- Section 4: URL Checker Tool -->
+        <section id="checker">
+            <h2>🔗 Phishing Link Detector</h2>
+            <p>Enter a URL below to check its potential phishing risk score. <br><em>(Note: This is an educational algorithm based on URL characteristics).</em></p>
+            
+            <div class="checker-box">
+                <input type="text" id="urlInput" placeholder="Enter URL here (e.g., http://example.com/login)...">
+                <button onclick="checkPhishing()">Check Risk</button>
+            </div>
+
+            <div id="resultArea">
+                <div id="riskText" class="risk-text"></div>
+                <p id="riskAnalysis"></p>
+                <div class="chart-container">
+                    <canvas id="riskChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Developed by <strong>G.Lohith</strong> and <strong>S.Sreedharshan</strong></p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let myChart = null;
+
+        function checkPhishing() {
+            const url = document.getElementById('urlInput').value.toLowerCase();
+            const resultArea = document.getElementById('resultArea');
+            const riskText = document.getElementById('riskText');
+            const riskAnalysis = document.getElementById('riskAnalysis');
+
+            if (!url) {
+                alert("Please enter a URL first.");
+                return;
+            }
+
+            // --- Simplified Phishing Detection Logic (Heuristic) ---
+            let riskScore = 0;
+            let reasons = [];
+
+            // 1. Length Check
+            if (url.length > 75) {
+                riskScore += 20;
+                reasons.push("URL is suspiciously long.");
+            }
+
+            // 2. IP Address Check
+            const ipPattern = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
+            if (ipPattern.test(url)) {
+                riskScore += 30;
+                reasons.push("URL uses an IP address instead of a domain name.");
+            }
+
+            // 3. At Symbol Check (Obfuscation)
+            if (url.includes('@')) {
+                riskScore += 25;
+                reasons.push("URL contains '@' symbol (often used to confuse browsers).");
+            }
+
+            // 4. Double Slash Check (Redirection)
+            if (url.lastIndexOf('//') > 7) {
+                riskScore += 15;
+                reasons.push("URL redirects (// appears later in the string).");
+            }
+
+            // 5. Hyphen Check
+            if ((url.match(/-/g) || []).length > 3) {
+                riskScore += 10;
+                reasons.push("Domain contains excessive hyphens.");
+            }
+
+            // 6. Suspicious Keywords
+            const keywords = ['secure', 'account', 'update', 'login', 'verify', 'bank', 'confirm'];
+            let kwFound = false;
+            keywords.forEach(kw => {
+                if (url.includes(kw)) kwFound = true;
+            });
+            if (kwFound) {
+                riskScore += 10;
+                reasons.push("URL contains sensitive keywords often used in phishing.");
+            }
+
+            // 7. Protocol Check
+            if (!url.startsWith('https')) {
+                riskScore += 10;
+                reasons.push("URL is not using secure HTTPS.");
+            }
+
+            // Cap score at 99%
+            if (riskScore > 99) riskScore = 99;
+            if (riskScore < 0) riskScore = 0;
+
+            // --- Display Results ---
+            resultArea.style.display = 'block';
+            
+            let riskLabel = "";
+            let color = "";
+
+            if (riskScore < 30) {
+                riskLabel = "Low Risk";
+                riskText.className = "risk-text safe";
+                color = "#27ae60";
+            } else if (riskScore < 70) {
+                riskLabel = "Moderate Risk";
+                riskText.className = "risk-text moderate";
+                color = "#f39c12";
+            } else {
+                riskLabel = "High Risk";
+                riskText.className = "risk-text danger";
+                color = "#c0392b";
+            }
+
+            riskText.innerText = `${riskLabel}: ${riskScore}%`;
+            
+            if(reasons.length > 0) {
+                riskAnalysis.innerHTML = "<strong>Detected Issues:</strong><br>" + reasons.join("<br>");
+            } else {
+                riskAnalysis.innerHTML = "No obvious phishing traits detected (but always be careful).";
+            }
+
+            // --- Render Chart ---
+            renderChart(riskScore, color);
+        }
+
+        function renderChart(risk, color) {
+            const ctx = document.getElementById('riskChart').getContext('2d');
+            const safe = 100 - risk;
+
+            // Destroy previous chart if it exists
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Risk', 'Safe'],
+                    datasets: [{
+                        data: [risk, safe],
+                        backgroundColor: [
+                            color,
+                            '#ecf0f1'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
